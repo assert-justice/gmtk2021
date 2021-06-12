@@ -1,10 +1,15 @@
-[gd_scene load_steps=6 format=2]
+[gd_scene load_steps=9 format=2]
 
 [ext_resource path="res://images/tileset.tres" type="TileSet" id=1]
 [ext_resource path="res://Player.tscn" type="PackedScene" id=2]
 [ext_resource path="res://scripts/Camera.gd" type="Script" id=3]
 [ext_resource path="res://scripts/TileManager.gd" type="Script" id=4]
 [ext_resource path="res://GUI.tscn" type="PackedScene" id=5]
+[ext_resource path="res://scripts/Deathbox.gd" type="Script" id=6]
+[ext_resource path="res://Audio.tscn" type="PackedScene" id=7]
+
+[sub_resource type="RectangleShape2D" id=1]
+extents = Vector2( 144, 144 )
 
 [node name="Game" type="Node2D"]
 
@@ -40,3 +45,11 @@ tile_set = ExtResource( 1 )
 cell_size = Vector2( 72, 72 )
 format = 1
 tile_data = PoolIntArray( -655360, 1, 0, -655346, 1, 0, -589824, 1, 0, -589810, 1, 0, -524288, 1, 0, -524274, 1, 0, -458752, 1, 0, -458738, 1, 0, -393216, 1, 0, -393202, 1, 0, -327680, 1, 0, -327666, 1, 0, -262144, 1, 0, -262130, 1, 0, -196608, 1, 0, -196594, 1, 0, -131072, 1, 0, -131058, 1, 0, -65536, 1, 0, -65522, 1, 0, 0, 1, 0, 14, 1, 0, 65536, 1, 0, 65550, 1, 0, 131072, 1, 0, 131086, 1, 0, 196608, 1, 0, 196622, 1, 0, 262144, 1, 0, 262158, 1, 0, 327680, 1, 0, 327693, 1, 0, 327694, 1, 0, 393216, 1, 0, 393230, 1, 0, 458752, 1, 0, 458765, 1, 0, 458766, 1, 0 )
+
+[node name="Audio" parent="." instance=ExtResource( 7 )]
+
+[node name="Deathbox" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Deathbox"]
+shape = SubResource( 1 )
+script = ExtResource( 6 )
