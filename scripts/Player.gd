@@ -63,11 +63,6 @@ func probe_check():
 		[-offset * 2.5 - down, - down]
 	])
 	
-	if on_left or near_left:
-		near_left = test_rays(space_state, [
-			[-offset * 5, Vector2.ZERO]
-		])
-	
 	# grounded_right
 	grounded_right = test_rays(space_state, [
 		[offset * 0.5, offset * 0.5 + down * 1.6],
@@ -79,21 +74,40 @@ func probe_check():
 		[-offset * 0.5, -offset * 0.5 + down * 1.6],
 		[-offset * 2, -offset * 2 + down * 1.6]
 	])
+	
+	if on_left or near_left:
+		near_left = test_rays(space_state, [
+			[-offset * 5, Vector2.ZERO]
+		])
+	if grounded_left:
+		near_left = false
+	if grounded_right:
+		near_right = false
 	update()
 	#var testLeft = space_state.intersect_ray(self.position - offset, probe - offset, [self])
 	#var testRight = space_state.intersect_ray(self.position + offset, probe + offset, [self])
 	#is_grounded = len(testLeft) != 0 or len(testRight) != 0
 	
-func get_movement():
+func get_movement(post = ""):
 	var vel = Vector2()
-	if Input.is_action_pressed("left"):
+	if Input.is_action_pressed("left" + post):
 		vel.x = -1
-	if Input.is_action_pressed("right"):
+	if Input.is_action_pressed("right" + post):
 		vel.x = 1
-	if Input.is_action_pressed("up"):
+	if Input.is_action_pressed("up" + post):
 		vel.y = -1
-	if Input.is_action_pressed("down"):
+	if Input.is_action_pressed("down" + post):
 		vel.y = 1
+	return vel
+	
+func combine_vel(vell, velr):
+	var vel = Vector2()
+	if grounded_left or on_left:
+		vel += vell
+	if grounded_right or on_right:
+		vel += velr
+	if not (grounded_right or grounded_left or on_left or on_right):
+		vel = vell + velr
 	return vel
 	
 func handle_movement(vel):
@@ -156,7 +170,10 @@ func handle_animate(vel):
 	
 func _physics_process(delta):
 	probe_check()
-	var vel = get_movement()
+	#var vel = get_movement()
+	var vell = get_movement("l")
+	var velr = get_movement("r")
+	var vel = combine_vel(vell, velr)
 	handle_movement(vel)
 	handle_animate(vel)
 	velocity = move_and_slide(velocity)
