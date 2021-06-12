@@ -1,5 +1,7 @@
 extends KinematicBody2D
 
+export (PackedScene) var bullet_scene
+
 var velocity = Vector2()
 var space_state = null
 var rays = null
@@ -19,6 +21,9 @@ var jump_count = 1
 var max_jumps = 1
 var jumph = 400
 var jumpv = 400
+var fire_time = 0.25
+var fire_clock = 0
+var bullet_speed = 600
 
 func _ready():
 	rays = []
@@ -87,7 +92,21 @@ func probe_check():
 	#var testLeft = space_state.intersect_ray(self.position - offset, probe - offset, [self])
 	#var testRight = space_state.intersect_ray(self.position + offset, probe + offset, [self])
 	#is_grounded = len(testLeft) != 0 or len(testRight) != 0
-	
+
+func fire_control(delta):
+	var aim = get_movement("r")
+	if fire_clock > 0:
+		fire_clock -= delta
+	if aim.length() > 0 and fire_clock <= 0 and (on_left or on_right or grounded_left or grounded_right):
+		fire_clock = fire_time
+		var bullet = bullet_scene.instance()
+		var min_vel = aim * bullet_speed
+		bullet.velocity = min_vel
+		if (min_vel + velocity).length() > min_vel.length():
+			bullet.velocity += velocity
+		bullet.position = position
+		get_parent().add_child(bullet)
+
 func get_movement(post = ""):
 	var vel = Vector2()
 	if Input.is_action_pressed("left" + post):
@@ -170,10 +189,11 @@ func handle_animate(vel):
 	
 func _physics_process(delta):
 	probe_check()
-	#var vel = get_movement()
-	var vell = get_movement("l")
-	var velr = get_movement("r")
-	var vel = combine_vel(vell, velr)
+	var vel = get_movement()
+	#var vell = get_movement("l")
+	#var velr = get_movement("r")
+	#var vel = combine_vel(vell, velr)
 	handle_movement(vel)
 	handle_animate(vel)
+	fire_control(delta)
 	velocity = move_and_slide(velocity)
