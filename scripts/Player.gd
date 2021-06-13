@@ -24,9 +24,23 @@ var jumpv = 400
 var fire_time = 0.25
 var fire_clock = 0
 var bullet_speed = 600
+var left_bar = null
+var right_bar = null
+var deplete_rate = 50
+var regen_rate = 50
+var jump_cost = 20
+var left_stam = 100
+var right_stam = 100
+var left_stam_last = 100
+var right_stam_last = 100
+var max_stam = 100
+var min_stam = -10
 
 func _ready():
 	rays = []
+	var bars = get_tree().get_nodes_in_group("bar")
+	left_bar = bars[0]
+	right_bar = bars[1]
 
 func _draw():
 	for ray in rays:
@@ -149,7 +163,12 @@ func handle_movement(vel):
 		if vel.y == 0:
 			velocity.y = slide_speed
 		elif vel.y < 0:
-			velocity.y = vel.y * climb_speed
+			if on_left and left_stam <= 0:
+				velocity.y = climb_speed + slide_speed
+			elif on_right and right_stam <= 0:
+				velocity.y = climb_speed + slide_speed
+			else:
+				velocity.y = vel.y * climb_speed
 		else:
 			velocity.y = vel.y * climb_speed + slide_speed
 	else:
@@ -158,10 +177,15 @@ func handle_movement(vel):
 	if on_left or on_right or near_left or near_right:
 		if Input.is_action_just_pressed("jump"):
 			if on_left or near_left:
-				velocity.x = jumph
+				if left_stam > 0:
+					left_stam -= jump_cost
+					velocity.x = jumph
+					velocity.y = -jumpv
 			else:
-				velocity.x = -jumph
-			velocity.y = -jumpv
+				if right_stam > 0:
+					right_stam -= jump_cost
+					velocity.x = -jumph
+					velocity.y = -jumpv
 		jump_count = max_jumps
 	
 	if not (grounded_left or grounded_right or on_left or on_right) and jump_count > 0 and Input.is_action_just_pressed("jump"):
@@ -186,14 +210,48 @@ func handle_animate(vel):
 			$RightPlayer.play("climb")
 	else:
 		$RightPlayer.stop()
+
+func handle_stamina(delta):
+	left_stam_last = left_stam
+	right_stam_last = right_stam
+	# if should regenerate stamina left
+	if (not on_left) or grounded_left or velocity.y >= 0:
+		left_stam += regen_rate * delta
+	else:
+		left_stam -= deplete_rate * delta
+	if left_stam <= 0 and left_stam_last > 0:
+		left_stam = min_stam
+
+	if (not on_right) or grounded_right or velocity.y >= 0:
+		right_stam += regen_rate * delta
+	else:
+		right_stam -= deplete_rate * delta
+	if right_stam <= 0 and right_stam_last > 0:
+		right_stam = min_stam
+		
 	
 func _physics_process(delta):
 	probe_check()
+	if (on_left or on_right) and $ClimbTheme.volume_db == -80:
+		$ClimbTheme.volume_db = 0
 	var vel = get_movement()
-	#var vell = get_movement("l")
-	#var velr = get_movement("r")
-	#var vel = combine_vel(vell, velr)
+	handle_stamina(delta)
 	handle_movement(vel)
 	handle_animate(vel)
-	fire_control(delta)
+	if left_stam > max_stam:
+		left_stam = max_stam
+	if right_stam > max_stam:
+		right_stam = max_stam
+	left_bar.value = left_stam
+	if left_bar.value < 0:
+		left_bar.value = 0
+	right_bar.value = right_stam
+	if right_bar.value < 0:
+		right_bar.value = 0
+	
 	velocity = move_and_slide(velocity)
+
+
+func _on_MainTheme_finished():
+	$MainTheme.play()
+	$ClimbTheme.play()

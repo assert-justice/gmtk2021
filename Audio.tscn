@@ -1,7 +1,8 @@
-[gd_scene load_steps=3 format=2]
+[gd_scene load_steps=4 format=2]
 
 [ext_resource path="res://scripts/Audio.gd" type="Script" id=1]
-[ext_resource path="res://music/loop.tres" type="AudioStream" id=2]
+[ext_resource path="res://music/main.wav" type="AudioStream" id=2]
+[ext_resource path="res://music/climbing.wav" type="AudioStream" id=3]
 
 [node name="Audio" type="Node2D"]
 script = ExtResource( 1 )
@@ -10,4 +11,10 @@ script = ExtResource( 1 )
 stream = ExtResource( 2 )
 autoplay = true
 
+[node name="ClimbTrack" type="AudioStreamPlayer" parent="."]
+stream = ExtResource( 3 )
+volume_db = -80.0
+autoplay = true
+
 [connection signal="finished" from="MainTrack" to="." method="_on_MainTrack_finished"]
+[connection signal="finished" from="ClimbTrack" to="." method="_on_MainTrack_finished"]
