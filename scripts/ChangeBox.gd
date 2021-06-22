@@ -1,4 +1,5 @@
 extends KinematicBody2D
+export var start_beat = 0
 
 var time = 0
 var beat_length = 60.0 / 110.0
@@ -8,10 +9,9 @@ var danger_off = 8
 
 func _ready():
 	pass
-	time = beat_length * 4.25
+	time = beat_length * 4.25 + start_beat * beat_length
 	danger_on *= beat_length
 	danger_off *= beat_length
-	print(danger_on + danger_off)
 	
 func _process(delta):
 	time += delta
@@ -24,7 +24,7 @@ func _process(delta):
 
 func set_danger(dan):
 	danger = dan
-	$DamageBox/CollisionShape2D.disabled = not danger
+	#$DamageBox/CollisionShape2D.disabled = not danger
 	if danger:
 		$DamageBox.scale = Vector2.ONE * 0.5
 		$DamageBox.rotation = PI * 0.25

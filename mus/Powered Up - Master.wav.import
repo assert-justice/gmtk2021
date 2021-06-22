@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Powered Up - Master.wav-7ab4fb485cc6eb7e4f53955036d0c1cd.sample"
+
+[deps]
+
+source_file="res://mus/Powered Up - Master.wav"
+dest_files=[ "res://.import/Powered Up - Master.wav-7ab4fb485cc6eb7e4f53955036d0c1cd.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

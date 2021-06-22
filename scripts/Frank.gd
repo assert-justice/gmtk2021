@@ -78,6 +78,7 @@ func _draw():
 	
 	#draw_circle(Vector2.ZERO, rad, Color.red)
 	draw_circle(Vector2.ZERO, body_rad, Color.black)
+	draw_rect(Rect2(-Vector2.ONE * hand_rad, Vector2.ONE * hand_rad * 2), Color.red)
 	var vec = Vector2.RIGHT
 	for i in range(6):
 		var pos = vec * hand_dist
@@ -88,3 +89,8 @@ func _draw():
 
 func _on_AudioStreamPlayer2D_finished():
 	$AudioStreamPlayer2D.play()
+
+
+func _on_Frank_body_entered(body):
+	if body.is_in_group("player"):
+		body.emit_signal("kill")

@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Win - Master.wav-8c7f49a8b86798a0651b6038624cee45.sample"
+
+[deps]
+
+source_file="res://mus/Win - Master.wav"
+dest_files=[ "res://.import/Win - Master.wav-8c7f49a8b86798a0651b6038624cee45.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

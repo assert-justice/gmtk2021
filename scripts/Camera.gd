@@ -7,6 +7,8 @@ func _ready():
 	player = get_tree().get_nodes_in_group("player")[0]
 
 func _process(delta):
+	if player == null:
+		return
 	if player.position.y > max_y:
 		position.y = max_y
 	else:

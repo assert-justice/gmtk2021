@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/climbing.wav-b400240f1f93d62f4e9702a3f6e36560.sample"
+
+[deps]
+
+source_file="res://mus/Old/climbing.wav"
+dest_files=[ "res://.import/climbing.wav-b400240f1f93d62f4e9702a3f6e36560.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

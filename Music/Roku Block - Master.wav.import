@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Roku Block - Master.wav-cb7167793d55d5087f836b75600fd89e.sample"
+
+[deps]
+
+source_file="res://Music/Roku Block - Master.wav"
+dest_files=[ "res://.import/Roku Block - Master.wav-cb7167793d55d5087f836b75600fd89e.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

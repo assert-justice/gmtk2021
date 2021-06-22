@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/roku block.wav-dd19fa922258949c467ef635e270b5f4.sample"
+
+[deps]
+
+source_file="res://mus/Music/Old/roku block.wav"
+dest_files=[ "res://.import/roku block.wav-dd19fa922258949c467ef635e270b5f4.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0

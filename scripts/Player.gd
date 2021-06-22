@@ -35,19 +35,23 @@ var left_stam_last = 100
 var right_stam_last = 100
 var max_stam = 100
 var min_stam = -10
+var text = null
+var max_height = 0
+var start_height = 0
+var pb
+
+signal kill
 
 func _ready():
 	rays = []
 	var bars = get_tree().get_nodes_in_group("bar")
 	left_bar = bars[0]
 	right_bar = bars[1]
-
-func _draw():
-	for ray in rays:
-		if test_ray(space_state, ray):
-			draw_line(ray[0], ray[1], Color.red)
-		else:
-			draw_line(ray[0], ray[1], Color.green)
+	text = get_tree().get_nodes_in_group("text")[0]
+	start_height = position.y
+	max_height = start_height
+	pb = get_parent().get_parent().best_height
+	display_height()
 
 func test_ray(state, ray):
 	return len(state.intersect_ray(self.position + ray[0], self.position + ray[1], [self])) != 0
@@ -148,6 +152,7 @@ func handle_movement(vel):
 		velocity.x = vel.x * walk_speed
 		jump_count = max_jumps
 		if Input.is_action_just_pressed("jump"):
+			$Jump.play()
 			velocity.y = -jumph
 	else:
 		if velocity.x < -air_speed:
@@ -178,17 +183,20 @@ func handle_movement(vel):
 		if Input.is_action_just_pressed("jump"):
 			if on_left or near_left:
 				if left_stam > 0:
+					$Jump.play()
 					left_stam -= jump_cost
 					velocity.x = jumph
 					velocity.y = -jumpv
 			else:
 				if right_stam > 0:
+					$Jump.play()
 					right_stam -= jump_cost
 					velocity.x = -jumph
 					velocity.y = -jumpv
 		jump_count = max_jumps
 	
 	if not (grounded_left or grounded_right or on_left or on_right) and jump_count > 0 and Input.is_action_just_pressed("jump"):
+		$Jump.play()
 		velocity.y = - jumph
 		jump_count -= 1
 
@@ -232,8 +240,11 @@ func handle_stamina(delta):
 	
 func _physics_process(delta):
 	probe_check()
-	if (on_left or on_right) and $ClimbTheme.volume_db == -80:
-		$ClimbTheme.volume_db = 0
+	if (on_left or on_right) and $Music/ClimbTheme.volume_db == -80:
+		$Music/ClimbTheme.volume_db = 0
+		get_tree().get_nodes_in_group("text")[1].queue_free()
+		#get_tree().get_nodes_in_group("deathbox")[0].velocity.y = -200
+		get_parent().get_children()[-1].velocity.y = -100
 	var vel = get_movement()
 	handle_stamina(delta)
 	handle_movement(vel)
@@ -248,10 +259,48 @@ func _physics_process(delta):
 	right_bar.value = right_stam
 	if right_bar.value < 0:
 		right_bar.value = 0
+	if position.y < max_height:
+		max_height = position.y
+		display_height()
 	
 	velocity = move_and_slide(velocity)
+	
+func display_height():
+	var disp = (start_height-max_height) / 72
+	disp = int(disp)
+	if disp > 1000 and $Music/WinTheme.volume_db == -80:
+		for theme in $Music.get_children():
+			theme.volume_db = -79
+		$Music/WinTheme.volume_db = 0
+	elif disp > 100 and $Music/PowerTheme.volume_db == -80 and get_tree().get_nodes_in_group("tile_manager")[0].use_advanced:
+		$Music/PowerTheme.volume_db = 0
+	text.text = "Climbed " + str(disp) + " Meters"
+	if pb > 0:
+		text.text += "\nPersonal Best: " + str(pb) + " Meters"
+	if disp > pb:
+		get_parent().get_parent().best_height = disp
 
 
 func _on_MainTheme_finished():
-	$MainTheme.play()
-	$ClimbTheme.play()
+	$Music/MainTheme.play()
+	$Music/ClimbTheme.play()
+	$Music/PowerTheme.play()
+
+
+func _on_Player_kill():
+	print("killed")
+	var parts = $DeathParticles
+	$DeathParticles/Timer.start()
+	$DeathParticles/AudioStreamPlayer2D.play()
+	#$DeathParticles/LoseMusic.play(10)
+	parts.emitting = true
+	remove_child(parts)
+	get_parent().add_child(parts)
+	parts.position = position
+	queue_free()
+
+
+func _on_WinTheme_finished():
+	$Music/MainTheme.volume_db = 0
+	$Music/ClimbTheme.volume_db = 0
+	$Music/PowerTheme.volume_db = 0

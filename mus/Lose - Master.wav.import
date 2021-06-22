@@ -1,0 +1,21 @@
+[remap]
+
+importer="wav"
+type="AudioStreamSample"
+path="res://.import/Lose - Master.wav-22aba4c22db2306f92c5c9658404091f.sample"
+
+[deps]
+
+source_file="res://mus/Lose - Master.wav"
+dest_files=[ "res://.import/Lose - Master.wav-22aba4c22db2306f92c5c9658404091f.sample" ]
+
+[params]
+
+force/8_bit=false
+force/mono=false
+force/max_rate=false
+force/max_rate_hz=44100
+edit/trim=false
+edit/normalize=false
+edit/loop=false
+compress/mode=0
