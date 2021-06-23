@@ -38,6 +38,7 @@ var min_stam = -10
 var text = null
 var max_height = 0
 var start_height = 0
+var tile_manager = null
 var pb
 
 signal kill
@@ -52,6 +53,7 @@ func _ready():
 	max_height = start_height
 	pb = get_parent().get_parent().best_height
 	display_height()
+	tile_manager = get_tree().get_nodes_in_group("tile_manager")[0]
 
 func test_ray(state, ray):
 	return len(state.intersect_ray(self.position + ray[0], self.position + ray[1], [self])) != 0
@@ -259,8 +261,9 @@ func _physics_process(delta):
 	right_bar.value = right_stam
 	if right_bar.value < 0:
 		right_bar.value = 0
-	if position.y < max_height:
-		max_height = position.y
+	var y = position.y - tile_manager.chunks_used * tile_manager.floor_height
+	if y < max_height:
+		max_height = y
 		display_height()
 	
 	velocity = move_and_slide(velocity)
@@ -272,7 +275,7 @@ func display_height():
 		for theme in $Music.get_children():
 			theme.volume_db = -79
 		$Music/WinTheme.volume_db = 0
-	elif disp > 100 and $Music/PowerTheme.volume_db == -80 and get_tree().get_nodes_in_group("tile_manager")[0].use_advanced:
+	elif disp > 100 and $Music/PowerTheme.volume_db == -80 and tile_manager.use_advanced:
 		$Music/PowerTheme.volume_db = 0
 	text.text = "Climbed " + str(disp) + " Meters"
 	if pb > 0:
@@ -288,7 +291,6 @@ func _on_MainTheme_finished():
 
 
 func _on_Player_kill():
-	print("killed")
 	var parts = $DeathParticles
 	$DeathParticles/Timer.start()
 	$DeathParticles/AudioStreamPlayer2D.play()

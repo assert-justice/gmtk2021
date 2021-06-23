@@ -52,7 +52,7 @@ func kickoff():
 	velocity = position.direction_to(rect_points[current_point]) * accel
 
 func _physics_process(delta):
-	probe_check()
+	#probe_check()
 	#if velocity.length() > 0 and velocity.length() < speed:
 		#velocity += velocity.normalized() * accel
 	if velocity.length() > 0 and (position - rect_points[current_point]).length() < close_enough:

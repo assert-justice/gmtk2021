@@ -1,6 +1,8 @@
 extends Node2D
 
 export var use_advanced = false
+export var chunks_used = 0
+export var floor_height = 18 * 72
 
 var flr = null
 var pool = []
@@ -8,8 +10,6 @@ var player = null
 var in_use = []
 var advanced = []
 var start = []
-var floor_height = 18 * 72
-var chunks_used = 0
 
 func prep_advanced():
 	pass
@@ -30,23 +30,27 @@ func _physics_process(delta):
 	if player == null:
 		return
 	if in_use[-1].position.y > player.position.y:
-		# remove second element from array
-		#in_use.pop_front()
+		chunks_used += 1
+		for obj in get_parent().get_children():
+			if obj != self:
+				obj.position.y += floor_height
+		for obj in get_children():
+			obj.position.y += floor_height
 		var temp = in_use.pop_front()
-		temp.position.x = - 15 * 72
 		if temp != flr:
 			pool.append(temp)
-		#in_use.push_front(flr)
-		#flr.position.y -= floor_height
-		var idx = rand_range(0, len(pool))
 		var new_chunk
 		if len(start) > 0:
 			new_chunk = start.pop_front()
 			if len(start) == 0:
 				use_advanced = true
 		else:
-			new_chunk = pool[idx]
-			pool.remove(idx)
+			while true:
+				var idx = rand_range(0, len(pool))
+				new_chunk = pool[idx]
+				if not new_chunk in in_use:
+					pool.remove(idx)
+					break
 		new_chunk.position.y = in_use[-1].position.y - floor_height
 		new_chunk.position.x = 0
 		in_use.push_back(new_chunk)
